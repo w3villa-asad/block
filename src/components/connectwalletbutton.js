@@ -12,6 +12,9 @@ const WalletConnectButton = () => {
     const [contsym, setContsym] = useState()
     const [contdecimal, setDecimal] = useState()
     const [userbal, setUserbal] = useState()
+
+    const [twbal, setTwbal] = useState()
+    
     // let CONTRACT=null;
     // let web3=null;
 
@@ -24,7 +27,7 @@ const WalletConnectButton = () => {
     const [addr] = useState('')
     const [title, setTitle] = useState('')
     const [num, setNum] = useState()
-
+    
     useEffect(() => {   
          if(web3 ){
              setCONTRACT(new web3.eth.Contract(ABI, ContractAddress))
@@ -34,7 +37,8 @@ const WalletConnectButton = () => {
 
 
      const transfer = ()=>{
-        CONTRACT.methods.transfer(title,num).send({ from: owner }).then((res)=>{
+         const number = num*(10**18)
+        CONTRACT.methods.transfer(title,number.toFixed(0)).send({ from: owner }).then((res)=>{
             console.log(res)
         })
         .catch((error)=>{
@@ -111,6 +115,14 @@ const WalletConnectButton = () => {
                          .catch((error)=>{
                             console.log(error)
                         })
+                       
+                        CONTRACT.methods.balanceOf(accounts[0]).call().then((res)=>{
+                            // console.log("symbol:",res)
+                            res = res/(10**18)
+                            setTwbal(res)
+                            console.log(res) 
+                              
+                            })
                         
                         }
                     // window.contract = myContract
@@ -144,6 +156,7 @@ const WalletConnectButton = () => {
         <h2>Contract Total Supply : {contsup}</h2>
         <h2>Contract Symbol : {contsym}</h2>
         <h2>Contract Decimal : {contdecimal}</h2>
+        <h2>TW3 Balance: {twbal}</h2>
         <label>Address: <input onChange={event => setTitle(event.target.value)} /></label>
         <label>Amount: <input onChange={event => setNum(event.target.value)} /></label>
         <button onClick={transfer}>Transfer</button>
